@@ -9,7 +9,7 @@ ADD . /app
 
 # Install audio libraries
 RUN apt-get clean
-RUN apt-get update && apt-get install -y libsndfile1 libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg
+RUN apt-get update && apt-get install
 
 # Install python packages
 RUN pip install --upgrade pip
