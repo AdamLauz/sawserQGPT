@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 
@@ -57,7 +57,10 @@ def sawserq_gpt_service():
         _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
         print("Finished Loading Tokenizer.")
         print("Loading LLM ...")
-        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH))
+        # disable exllama to be able to run on CPU
+        config = AutoConfig.from_pretrained(str(LLM_PATH))
+        config.quantization_config["use_exllama"] = False
+        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH), config=config)
         print("Finished Loading LLM.")
         print("Loading Context Model...")
         _SawserqGptService.context = lambda user_input: get_context(query=user_input,
