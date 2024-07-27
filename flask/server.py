@@ -3,14 +3,13 @@ from sawser_q_gpt_service import sawserq_gpt_service
 
 app = Flask(__name__)
 
+# Initialize sawserq_gpt_service when the server starts
+sawserq_gpt = sawserq_gpt_service()
 
 @app.route("/query", methods=["POST"])
 def predict():
     # get the user query
     user_query = request.get_json().get("query")
-
-    # invoke sawser Q GPT service
-    sawserq_gpt = sawserq_gpt_service()
 
     # make a query
     answer = sawserq_gpt.query(user_query)
