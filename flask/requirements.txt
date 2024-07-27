@@ -7,7 +7,7 @@ decorator==5.1.1
 filelock==3.13.1
 Flask==3.0.0
 fsspec==2023.10.0
-huggingface-hub==0.19.4
+huggingface-hub==0.23.0
 idna==3.6
 itsdangerous==2.1.2
 Jinja2==3.1.2
