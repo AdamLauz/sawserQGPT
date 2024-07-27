@@ -2,8 +2,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 
-LLM_PATH = str(Path("LLM.h5"))
-LLM_TOKENIZER_PATH = str(Path("LLM_TOKENIZER.h5"))
+LLM_PATH = str(Path("LLM"))
+LLM_TOKENIZER_PATH = str(Path("LLM_TOKENIZER"))
 
 
 class _SawserqGptService:
