@@ -7,6 +7,9 @@ WORKDIR /app
 # Transfer content from current dir to /app in container
 ADD . /app
 
+# List contents of /app to verify directories
+RUN ls -l /app
+
 # Install audio libraries
 RUN apt-get clean
 RUN apt-get update && apt-get install

@@ -2,8 +2,11 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 
-LLM_PATH = str(Path("LLM"))
-LLM_TOKENIZER_PATH = str(Path("LLM_TOKENIZER"))
+# Define the root directory
+ROOT_DIR = Path(__file__).parent
+
+LLM_PATH = ROOT_DIR / "LLM"
+LLM_TOKENIZER_PATH = ROOT_DIR / "LLM_TOKENIZER"
 
 
 class _SawserqGptService:
@@ -50,8 +53,8 @@ def sawserq_gpt_service():
     """
     if _SawserqGptService._instance is None:
         _SawserqGptService._instance = _SawserqGptService()
-        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(LLM_TOKENIZER_PATH)
-        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(LLM_PATH)
+        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
+        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH))
         _SawserqGptService.context = lambda user_input: get_context(query=user_input,
                                                                     query_engine=get_query_engine(_SawserqGptService.settings),
                                                                     top_k=get_query_engine(["top_k"]))
