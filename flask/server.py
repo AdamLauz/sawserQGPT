@@ -6,6 +6,7 @@ app = Flask(__name__)
 # Initialize sawserq_gpt_service when the server starts
 sawserq_gpt = sawserq_gpt_service()
 
+
 @app.route("/query", methods=["POST"])
 def predict():
     # get the user query

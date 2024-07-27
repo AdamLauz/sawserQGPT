@@ -53,11 +53,17 @@ def sawserq_gpt_service():
     """
     if _SawserqGptService._instance is None:
         _SawserqGptService._instance = _SawserqGptService()
+        print("Loading Tokenizer ...")
         _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
+        print("Finished Loading Tokenizer.")
+        print("Loading LLM ...")
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH))
+        print("Finished Loading LLM.")
+        print("Loading Context Model...")
         _SawserqGptService.context = lambda user_input: get_context(query=user_input,
                                                                     query_engine=get_query_engine(_SawserqGptService.settings),
                                                                     top_k=get_query_engine(["top_k"]))
+        print("Finished Loading Context Model...")
 
     return _SawserqGptService._instance
 
