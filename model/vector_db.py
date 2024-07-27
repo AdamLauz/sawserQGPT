@@ -10,7 +10,7 @@ import json
 # File paths for query engine and storage persistence
 PERSIST_DIR = "../flask/storage"
 SETTINGS_FILE = "../flask/settings.json"
-
+ARTICLES_DIR = "../resources"
 
 def save_settings(settings):
     os.makedirs(PERSIST_DIR, exist_ok=True)
@@ -31,7 +31,7 @@ def get_settings():
 
 def build_index():
     # Read documents from 'articles' directory
-    documents = SimpleDirectoryReader("articles").load_data()
+    documents = SimpleDirectoryReader(ARTICLES_DIR).load_data()
     print(f"Number of documents: {len(documents)}")
 
     # Store documents into a vector database
