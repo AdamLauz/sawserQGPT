@@ -49,10 +49,11 @@ class _SawserqGptService:
             device = "cuda"
         else:
             device = "cpu"
-            # Ensure model is in float32 precision
-            self.model = self.model.to(device).float()
 
         print(f"device = {device}")
+
+        print(f"model config = {str(self.model.config)}")
+
         inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
         outputs = self.model.generate(**inputs, max_new_tokens=280)
 
@@ -73,12 +74,10 @@ def sawserq_gpt_service():
         print(f"USE_GPU is {USE_GPU}")
 
         print("Loading model...")
-        model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
         # Load config from local path
         config = AutoConfig.from_pretrained(str(LLM_PATH))
 
-        print(f"config file: {str(config)}")
-        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
             str(LLM_PATH),
             config=config

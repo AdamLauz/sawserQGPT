@@ -9,7 +9,7 @@ USE_GPU = torch.cuda.is_available()
 
 
 def load_llm():
-    model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+    model_name = "mistralai/Mistral-7B-Instruct-v0.2"
 
     # disable exllama to be able to run on CPU
     config = AutoConfig.from_pretrained(model_name)
