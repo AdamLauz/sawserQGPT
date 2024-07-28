@@ -9,8 +9,9 @@ import json
 
 # File paths for query engine and storage persistence
 PERSIST_DIR = "../flask/storage"
-SETTINGS_FILE = "../flask/settings.json"
+SETTINGS_FILE = "../flask/storage/settings.json"
 ARTICLES_DIR = "../resources"
+
 
 def save_settings(settings):
     os.makedirs(PERSIST_DIR, exist_ok=True)
@@ -46,6 +47,9 @@ def get_query_engine(settings):
     Settings.llm = settings["llm"]
     Settings.chunk_size = settings["chunk_size"]
     Settings.chunk_overlap = settings["chunk_overlap"]
+
+    # save settings file
+    save_settings(settings)
 
     # Load existing index or build a new one if it doesn't exist
     index = load_index()
