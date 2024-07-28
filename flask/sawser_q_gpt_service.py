@@ -68,6 +68,7 @@ def sawserq_gpt_service():
             print("Loading GPU model...")
             model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
             config = AutoConfig.from_pretrained(model_name)
+            config.quantization_config["use_exllama"] = False
             _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
             _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
                 model_name,

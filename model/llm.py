@@ -26,7 +26,7 @@ def load_llm_gpu():
 
     # disable exllama to be able to run on CPU
     config = AutoConfig.from_pretrained(model_name)
-    # config.quantization_config["use_exllama"] = True
+    config.quantization_config["use_exllama"] = False
 
     # Load model
     model = AutoModelForCausalLM.from_pretrained(
