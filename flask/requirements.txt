@@ -47,3 +47,4 @@ llama-index==0.10.55
 llama-index-embeddings-huggingface==0.2.2
 auto-gptq==0.7.1
 optimum==1.21.2
+ctransformers==0.2.24

@@ -1,4 +1,6 @@
+import os
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from ctransformers import AutoModelForCausalLM as cAutoLLM
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 
@@ -7,6 +9,7 @@ ROOT_DIR = Path(__file__).parent
 
 LLM_PATH = ROOT_DIR / "LLM"
 LLM_TOKENIZER_PATH = ROOT_DIR / "LLM_TOKENIZER"
+LLM_CPU_PATH = ROOT_DIR / "LLM_CPU"
 
 
 class _SawserqGptService:
@@ -19,6 +22,7 @@ class _SawserqGptService:
     model = None
     context = None
     settings = load_settings()
+    use_gpu = None
 
     def query(self, query: str) -> str:
         # prompt (with context)
@@ -37,10 +41,13 @@ class _SawserqGptService:
         context = self.context(query)
         prompt = prompt_template_w_context(context, query)
 
-        inputs = self.tokenizer(prompt, return_tensors="pt")
-        outputs = self.model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=280)
-
-        return self.tokenizer.batch_decode(outputs)[0]
+        if self.use_gpu:
+            inputs = self.tokenizer(prompt, return_tensors="pt")
+            outputs = self.model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=280)
+            return self.tokenizer.batch_decode(outputs)[0]
+        else:
+            output = self.model(prompt)
+            return output
 
     @property
     def instance(self):
@@ -53,20 +60,35 @@ def sawserq_gpt_service():
     """
     if _SawserqGptService._instance is None:
         _SawserqGptService._instance = _SawserqGptService()
-        print("Loading Tokenizer ...")
-        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
-        print("Finished Loading Tokenizer.")
-        print("Loading LLM ...")
-        # disable exllama to be able to run on CPU
-        config = AutoConfig.from_pretrained(str(LLM_PATH))
-        # config.quantization_config["use_exllama"] = False
-        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH), config=config)
-        print("Finished Loading LLM.")
+
+        # Determine whether to load the CPU or GPU model
+        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower() == "true"
+
+        if _SawserqGptService.use_gpu:
+            print("Loading GPU model...")
+            model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+            config = AutoConfig.from_pretrained(model_name)
+            _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+            _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                device_map="auto",
+                trust_remote_code=False,
+                revision="main",
+                config=config
+            )
+            print("Finished Loading GPU model.")
+        else:
+            print("Loading CPU model...")
+            _SawserqGptService.model = cAutoLLM.from_pretrained(str(LLM_CPU_PATH))
+            print("Finished Loading CPU model.")
+
         print("Loading Context Model...")
-        _SawserqGptService.context = lambda user_input: get_context(query=user_input,
-                                                                    query_engine=get_query_engine(_SawserqGptService.settings),
-                                                                    top_k=get_query_engine(["top_k"]))
-        print("Finished Loading Context Model...")
+        _SawserqGptService.context = lambda user_input: get_context(
+            query=user_input,
+            query_engine=get_query_engine(_SawserqGptService.settings),
+            top_k=get_query_engine(["top_k"])
+        )
+        print("Finished Loading Context Model.")
 
     return _SawserqGptService._instance
 
