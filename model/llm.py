@@ -11,7 +11,7 @@ def load_llm():
 
     # disable exllama to be able to run on CPU
     config = AutoConfig.from_pretrained(model_name)
-    config.quantization_config["use_exllama"] = False
+    # config.quantization_config["use_exllama"] = True
 
     # Load model
     model = AutoModelForCausalLM.from_pretrained(

@@ -59,7 +59,7 @@ def sawserq_gpt_service():
         print("Loading LLM ...")
         # disable exllama to be able to run on CPU
         config = AutoConfig.from_pretrained(str(LLM_PATH))
-        config.quantization_config["use_exllama"] = False
+        # config.quantization_config["use_exllama"] = False
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(str(LLM_PATH), config=config)
         print("Finished Loading LLM.")
         print("Loading Context Model...")
