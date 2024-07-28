@@ -49,8 +49,8 @@ class _SawserqGptService:
             device = "cuda"
         else:
             device = "cpu"
-            # # Ensure model is in float32 precision
-            # self.model = self.model.to(device).float()
+            # Ensure model is in float32 precision
+            self.model = self.model.to(device).float()
 
         print(f"device = {device}")
         inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
@@ -77,6 +77,7 @@ def sawserq_gpt_service():
         # Load config from local path
         config = AutoConfig.from_pretrained(str(LLM_PATH))
 
+        print(f"config file: {str(config)}")
         _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
             str(LLM_PATH),
