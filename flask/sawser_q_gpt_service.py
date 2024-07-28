@@ -67,7 +67,7 @@ def sawserq_gpt_service():
         _SawserqGptService._instance = _SawserqGptService()
 
         # Determine whether to load the CPU or GPU model
-        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower()
+        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower() == "true"
 
         print(f"USE_GPU is {_SawserqGptService.use_gpu }")
 
