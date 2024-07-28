@@ -21,6 +21,7 @@ class _SawserqGptService:
     tokenizer = None
     model = None
     context = None
+    query_engine = None
     settings = load_settings()
     use_gpu = None
 
@@ -38,7 +39,7 @@ class _SawserqGptService:
         [/INST]
         """
 
-        context = self.context(query_str)
+        context = self.context(query_str, _SawserqGptService.query_engine)
         prompt = prompt_template_w_context(context, query_str)
 
         if self.use_gpu:
@@ -82,10 +83,11 @@ def sawserq_gpt_service():
             print("Finished Loading CPU model.")
 
         print("Loading Context Model...")
-        _SawserqGptService.context = lambda user_input: get_context(
+        _SawserqGptService.query_engine = get_query_engine(_SawserqGptService.settings)
+        _SawserqGptService.context = lambda user_input, q_engine: get_context(
             query=user_input,
-            query_engine=get_query_engine(_SawserqGptService.settings),
-            top_k=get_query_engine(["top_k"])
+            query_engine=q_engine,
+            top_k=q_engine["top_k"]
         )
         print("Finished Loading Context Model.")
 
