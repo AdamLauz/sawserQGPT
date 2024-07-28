@@ -24,7 +24,7 @@ class _SawserqGptService:
     settings = load_settings()
     use_gpu = None
 
-    def query(self, query: str) -> str:
+    def query(self, query_str: str) -> str:
         # prompt (with context)
         prompt_template_w_context = lambda context, user_input: f"""[INST]SawserQGPT, functioning as a virtual Circassian history and culture expert, communicates in clear, accessible language, uses facts and reliable numbers upon request. \
         It reacts to feedback aptly and ends responses with its signature '–SawserQGPT'. \
@@ -38,8 +38,8 @@ class _SawserqGptService:
         [/INST]
         """
 
-        context = self.context(query)
-        prompt = prompt_template_w_context(context, query)
+        context = self.context(query_str)
+        prompt = prompt_template_w_context(context, query_str)
 
         if self.use_gpu:
             inputs = self.tokenizer(prompt, return_tensors="pt")
@@ -67,14 +67,12 @@ def sawserq_gpt_service():
         if _SawserqGptService.use_gpu:
             print("Loading GPU model...")
             model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
-            config = AutoConfig.from_pretrained(model_name)
-            config.quantization_config["use_exllama"] = False
+            # Load config from local path
+            config = AutoConfig.from_pretrained(str(LLM_PATH))
+
             _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
             _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                device_map="auto",
-                trust_remote_code=False,
-                revision="main",
+                str(LLM_PATH),
                 config=config
             )
             print("Finished Loading GPU model.")
