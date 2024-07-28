@@ -1,14 +1,16 @@
-import os
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-from ctransformers import AutoModelForCausalLM as cAutoLLM
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
+import torch
 
 # Define the root directory
 ROOT_DIR = Path(__file__).parent
 
 LLM_PATH = ROOT_DIR / "LLM"
 LLM_TOKENIZER_PATH = ROOT_DIR / "LLM_TOKENIZER"
+
+# Determine whether to load the CPU or GPU model
+USE_GPU = torch.cuda.is_available()
 
 
 class _SawserqGptService:
@@ -43,12 +45,12 @@ class _SawserqGptService:
         context = get_context(query_str, self.query_engine, self.settings["top_k"])
         prompt = prompt_template_w_context(context, query_str)
 
-        if self.use_gpu:
+        if USE_GPU:
             device = "cuda"
         else:
             device = "cpu"
-            # Ensure model is in float32 precision
-            self.model = self.model.to(device).float()
+            # # Ensure model is in float32 precision
+            # self.model = self.model.to(device).float()
 
         print(f"device = {device}")
         inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
@@ -68,10 +70,7 @@ def sawserq_gpt_service():
     if _SawserqGptService._instance is None:
         _SawserqGptService._instance = _SawserqGptService()
 
-        # Determine whether to load the CPU or GPU model
-        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower() == "true"
-
-        print(f"USE_GPU is {_SawserqGptService.use_gpu }")
+        print(f"USE_GPU is {USE_GPU}")
 
         print("Loading model...")
         model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"

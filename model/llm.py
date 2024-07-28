@@ -1,12 +1,11 @@
-import argparse
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from pathlib import Path
-import os
 
 SAVED_MODEL_PATH = "../flask"
 LLM_PATH = str(Path(SAVED_MODEL_PATH, "LLM"))
 LLM_TOKENIZER_PATH = str(Path(SAVED_MODEL_PATH, "LLM_TOKENIZER"))
-USE_GPU = os.getenv("USE_GPU", "false").lower()
+USE_GPU = torch.cuda.is_available()
 
 
 def load_llm():
@@ -17,12 +16,14 @@ def load_llm():
     if not USE_GPU:
         config.quantization_config["use_exllama"] = False
 
+
     # Load model
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        device_map="auto",  # Ensure this is configured for GPU usage if available
+        device_map="auto" if USE_GPU else "cpu",
         trust_remote_code=False,
-        revision="main",
+        revision="fp16" if USE_GPU else "fp32",
+        torch_dtype=torch.float16 if USE_GPU else torch.float32,
         config=config  # Pass the config
     )
 
