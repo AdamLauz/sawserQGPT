@@ -48,6 +48,7 @@ class _SawserqGptService:
         else:
             device = "cpu"
 
+        print(f"device = {device}")
         inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
         outputs = self.model.generate(**inputs, max_new_tokens=280)
 
