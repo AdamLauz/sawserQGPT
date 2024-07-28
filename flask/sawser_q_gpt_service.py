@@ -67,8 +67,9 @@ def sawserq_gpt_service():
         _SawserqGptService._instance = _SawserqGptService()
 
         # Determine whether to load the CPU or GPU model
-        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower() == "true"
+        _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower()
 
+        print(f"USE_GPU is {_SawserqGptService.use_gpu }")
         if _SawserqGptService.use_gpu:
             print("Loading GPU model...")
             model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
