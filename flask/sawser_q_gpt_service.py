@@ -4,7 +4,6 @@ from ctransformers import AutoModelForCausalLM as cAutoLLM
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 
-
 # Define the root directory
 ROOT_DIR = Path(__file__).parent
 
@@ -46,7 +45,7 @@ class _SawserqGptService:
         prompt = prompt_template_w_context(context, query_str)
 
         if self.use_gpu:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = "cuda"
         else:
             device = "cpu"
 
