@@ -47,6 +47,8 @@ class _SawserqGptService:
             device = "cuda"
         else:
             device = "cpu"
+            # Ensure model is in float32 precision
+            self.model = self.model.to(device).float()
 
         print(f"device = {device}")
         inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
