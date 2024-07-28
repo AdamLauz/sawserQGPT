@@ -9,7 +9,6 @@ ROOT_DIR = Path(__file__).parent
 
 LLM_PATH = ROOT_DIR / "LLM"
 LLM_TOKENIZER_PATH = ROOT_DIR / "LLM_TOKENIZER"
-LLM_CPU_PATH = ROOT_DIR / "LLM_CPU"
 
 
 class _SawserqGptService:
@@ -70,22 +69,18 @@ def sawserq_gpt_service():
         _SawserqGptService.use_gpu = os.getenv("USE_GPU", "false").lower()
 
         print(f"USE_GPU is {_SawserqGptService.use_gpu }")
-        if _SawserqGptService.use_gpu:
-            print("Loading GPU model...")
-            model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
-            # Load config from local path
-            config = AutoConfig.from_pretrained(str(LLM_PATH))
 
-            _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-            _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
-                str(LLM_PATH),
-                config=config
-            )
-            print("Finished Loading GPU model.")
-        else:
-            print("Loading CPU model...")
-            _SawserqGptService.model = cAutoLLM.from_pretrained(str(LLM_CPU_PATH))
-            print("Finished Loading CPU model.")
+        print("Loading model...")
+        model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+        # Load config from local path
+        config = AutoConfig.from_pretrained(str(LLM_PATH))
+
+        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
+            str(LLM_PATH),
+            config=config
+        )
+        print("Finished Loading model.")
 
         print("Loading Context Model...")
         _SawserqGptService.query_engine = get_query_engine(_SawserqGptService.settings)
