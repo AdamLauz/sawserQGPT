@@ -38,8 +38,10 @@ class _SawserqGptService:
         {user_input}
         [/INST]
         """
-
-        context = self.context(query_str, _SawserqGptService.query_engine)
+        print("running prompt:")
+        print(f"query: {query_str}")
+        print(f"settings: {str(self.settings)}")
+        context = get_context(query_str, self.query_engine, self.settings["top_k"])
         prompt = prompt_template_w_context(context, query_str)
 
         if self.use_gpu:
@@ -84,11 +86,6 @@ def sawserq_gpt_service():
 
         print("Loading Context Model...")
         _SawserqGptService.query_engine = get_query_engine(_SawserqGptService.settings)
-        _SawserqGptService.context = lambda user_input, q_engine: get_context(
-            query=user_input,
-            query_engine=q_engine,
-            top_k=q_engine["top_k"]
-        )
         print("Finished Loading Context Model.")
 
     return _SawserqGptService._instance
