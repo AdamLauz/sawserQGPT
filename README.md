@@ -25,9 +25,10 @@ The service can be easily deployed using Docker Compose. Below is an example of 
 1. Clone the repository.
 2. Navigate to the project directory.
 3. Build Python venv and pip install flask/requirements.txt
-4. Run once model/vector_db.py to generate index
-5. Run once model/llm.py to download and save the llm
-6. Run `docker compose up --build` to build and start the service.
+4. Activate venv
+5. Run once model/vector_db.py to generate and save the db index
+6. Run once model/llm.py to download and save the llm
+7. Run `docker compose up --build` to build and start the service.
 
 ---
 
