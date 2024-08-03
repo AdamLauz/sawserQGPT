@@ -18,7 +18,7 @@ RUN apt-get clean && \
 
 # Install NVIDIA drivers
 RUN apt -y update
-RUN apt-get install -y nvidia-driver-550 nvidia-dkms-550
+RUN apt install nvidia-driver-550 nvidia-dkms-550
 RUN apt install nvidia-cuda-toolkit
 
 # Upgrade pip
