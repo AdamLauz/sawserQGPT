@@ -79,12 +79,29 @@ def sawserq_gpt_service():
         config.quantization_config["use_exllama"] = True
         config.quantization_config["exllama_config"] = {"version": 2}
 
-        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
-        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
-            str(LLM_PATH),
-            device_map="cuda:0",
-            config=config
-        ).to("cuda" if USE_GPU else "cpu")
+        model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+
+        # disable exllama to be able to run on CPU
+        config = AutoConfig.from_pretrained(model_name)
+        if not USE_GPU:
+            config.quantization_config["use_exllama"] = False
+
+        _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(model_name,
+                                                                        device_map="auto",
+                                                                        trust_remote_code=False,
+                                                                        revision="main",
+                                                                        config=config
+                                                                        ).to("cuda" if USE_GPU else "cpu")
+
+        # # Load tokenizer
+        # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        #
+        # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
+        # _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
+        #     str(LLM_PATH),
+        #     device_map="cuda:0",
+        #     config=config
+        # ).to("cuda" if USE_GPU else "cpu")
         print("Finished Loading model.")
 
         print("Loading Context Model...")
