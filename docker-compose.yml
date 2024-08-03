@@ -6,6 +6,13 @@ services:
     build: ./flask
     container_name: flask
     restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
     expose:
       - 900
 
