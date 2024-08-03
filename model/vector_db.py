@@ -6,6 +6,8 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core import StorageContext, load_index_from_storage
 import json
+from pathlib import Path
+
 
 # File paths for query engine and storage persistence
 PERSIST_DIR = "../flask/storage"
@@ -79,7 +81,7 @@ def save_index(index):
 
 def load_index():
     # Load the index from persistent storage if it exists
-    if not os.path.exists(PERSIST_DIR):
+    if not os.path.exists(str(Path(PERSIST_DIR, "docstore.json"))):
         return None
     return load_index_from_storage(StorageContext.from_defaults(persist_dir=PERSIST_DIR))
 
