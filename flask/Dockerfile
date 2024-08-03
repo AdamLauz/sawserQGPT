@@ -25,11 +25,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install torch with CUDA
 RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
-# Install wheel and ninja
-RUN pip install wheel ninja
-
-# Clone and install AutoGPTQ from source
-RUN pip install "git+https://github.com/PanQiWei/AutoGPTQ.git"
-
 # Start uWSGI using config file
 CMD ["uwsgi", "app.ini"]
