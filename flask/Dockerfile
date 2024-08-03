@@ -29,11 +29,7 @@ RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org
 RUN pip install wheel ninja
 
 # Clone and install AutoGPTQ from source
-RUN git clone https://github.com/PanQiWei/AutoGPTQ.git && \
-    cd AutoGPTQ && \
-    pip install . --no-build-isolation && \
-    cd ..
-
+RUN pip install "git+https://github.com/PanQiWei/AutoGPTQ.git"
 
 # Start uWSGI using config file
 CMD ["uwsgi", "app.ini"]
