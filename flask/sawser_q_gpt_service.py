@@ -82,17 +82,14 @@ def sawserq_gpt_service():
         model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 
         # disable exllama to be able to run on CPU
-        config = AutoConfig.from_pretrained(model_name)
-        if not USE_GPU:
-            config.quantization_config["use_exllama"] = False
+        # config = AutoConfig.from_pretrained(model_name)
+        # if not USE_GPU:
+        #     config.quantization_config["use_exllama"] = False
 
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(model_name,
                                                                         device_map="auto",
                                                                         trust_remote_code=False,
-                                                                        revision="main",
-                                                                        config=config
-                                                                        ).to("cuda" if USE_GPU else "cpu")
-
+                                                                        revision="main")
         # Load tokenizer
         _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
         #
