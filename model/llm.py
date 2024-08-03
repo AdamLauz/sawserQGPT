@@ -24,7 +24,7 @@ def load_llm():
         trust_remote_code=False,
         revision="main" if USE_GPU else "fp32",
         # torch_dtype=torch.float16 if USE_GPU else torch.float32,
-        config=config  # Pass the config
+        # config=config  # Pass the config
     )
 
     # Load tokenizer
