@@ -22,7 +22,7 @@ def load_llm():
         model_name,
         device_map="cuda" if USE_GPU else "cpu",
         trust_remote_code=False,
-        revision="fp16" if USE_GPU else "fp32",
+        revision="main" if USE_GPU else "fp32",
         torch_dtype=torch.float16 if USE_GPU else torch.float32,
         config=config  # Pass the config
     )
