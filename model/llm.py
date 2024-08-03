@@ -16,16 +16,20 @@ def load_llm():
     if not USE_GPU:
         config.quantization_config["use_exllama"] = False
 
-
     # Load model
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map="cuda" if USE_GPU else "cpu",
-        trust_remote_code=False,
-        revision="main" if USE_GPU else "fp32",
-        # torch_dtype=torch.float16 if USE_GPU else torch.float32,
-        # config=config  # Pass the config
-    )
+    # model = AutoModelForCausalLM.from_pretrained(
+    #     model_name,
+    #     device_map="cuda" if USE_GPU else "cpu",
+    #     trust_remote_code=False,
+    #     revision="main" if USE_GPU else "fp32",
+    #     # torch_dtype=torch.float16 if USE_GPU else torch.float32,
+    #     # config=config  # Pass the config
+    # )
+
+    model = AutoModelForCausalLM.from_pretrained(model_name,
+                                                 device_map="auto",
+                                                 trust_remote_code=False,
+                                                 revision="main").to("cuda" if USE_GPU else "cpu")
 
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
