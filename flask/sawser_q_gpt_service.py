@@ -74,12 +74,12 @@ def sawserq_gpt_service():
 
         print("Loading model...")
 
+        model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+
         # Load config from local path
-        config = AutoConfig.from_pretrained(str(LLM_PATH))
+        config = AutoConfig.from_pretrained(model_name)
         config.quantization_config["use_exllama"] = True
         config.quantization_config["exllama_config"] = {"version": 2}
-
-        model_name = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 
         # disable exllama to be able to run on CPU
         # config = AutoConfig.from_pretrained(model_name)
