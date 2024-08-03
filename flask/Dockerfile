@@ -10,25 +10,28 @@ ADD . /app
 # List contents of /app to verify directories
 RUN ls -l /app
 
-# Install audio libraries
-RUN apt-get clean
-RUN apt-get update && apt-get install
+# Install audio libraries and essential build tools
+RUN apt-get clean && \
+    apt-get update && \
+    apt-get install -y git build-essential && \
+    apt-get clean
 
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Install python packages
+# Install python packages from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# autoGPT build from source
+# Install wheel and ninja
 RUN pip install wheel ninja
-RUN git clone https://github.com/PanQiWei/AutoGPTQ
-RUN cd AutoGPTQ
-RUN pip install .
-RUN cd ..
 
+# Clone and install AutoGPTQ from source
+RUN git clone https://github.com/PanQiWei/AutoGPTQ.git && \
+    cd AutoGPTQ && \
+    pip install . --no-build-isolation && \
+    cd ..
 
-# Install torch with cuda
+# Install torch with CUDA
 RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
 # Start uWSGI using config file
