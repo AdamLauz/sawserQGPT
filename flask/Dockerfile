@@ -16,10 +16,6 @@ RUN apt-get clean && \
     apt-get install -y git build-essential && \
     apt-get clean
 
-# Install NVIDIA drivers
-RUN apt -y update
-RUN apt install nvidia-cuda-toolkit
-
 # Upgrade pip
 RUN pip install --upgrade pip
 
