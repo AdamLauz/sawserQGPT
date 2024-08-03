@@ -25,6 +25,7 @@ RUN pip install wheel ninja
 RUN git clone https://github.com/PanQiWei/AutoGPTQ
 RUN cd AutoGPTQ
 RUN pip install .
+RUN cd ..
 
 
 # Install torch with cuda
