@@ -53,11 +53,10 @@ class _SawserqGptService:
 
         print(f"model config = {str(self.model.config)}")
 
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
-        outputs = self.model.generate(inputs=inputs, temperature=0.7, do_sample=True, top_p=0.95, top_k=40,
-                                      max_new_tokens=512)
+        input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.to(device)
+        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280)
 
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return self.tokenizer.batch_decode(outputs)[0]
 
     @property
     def instance(self):
