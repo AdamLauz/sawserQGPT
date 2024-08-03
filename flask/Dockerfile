@@ -18,8 +18,5 @@ RUN apt-get update && apt-get install
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Set environment variable for GPU usage
-ENV USE_GPU=false
-
 # Start uWSGI using config file
 CMD ["uwsgi", "app.ini"]
