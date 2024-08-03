@@ -18,5 +18,8 @@ RUN apt-get update && apt-get install
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install torch with cuda
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
 # Start uWSGI using config file
 CMD ["uwsgi", "app.ini"]
