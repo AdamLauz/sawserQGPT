@@ -93,8 +93,8 @@ def sawserq_gpt_service():
                                                                         config=config
                                                                         ).to("cuda" if USE_GPU else "cpu")
 
-        # # Load tokenizer
-        # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        # Load tokenizer
+        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
         #
         # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
         # _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
