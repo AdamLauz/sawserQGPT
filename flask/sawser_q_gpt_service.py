@@ -85,7 +85,7 @@ def sawserq_gpt_service():
             str(LLM_PATH),
             device_map="cuda:0",
             config=config
-        ).to("cuda" if _SawserqGptService.use_gpu else "cpu")
+        ).to("cuda" if USE_GPU else "cpu")
         print("Finished Loading model.")
 
         print("Loading Context Model...")
