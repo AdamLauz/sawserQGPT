@@ -24,7 +24,6 @@ class _SawserqGptService:
     context = None
     query_engine = None
     settings = load_settings()
-    use_gpu = None
 
     def query(self, query_str: str) -> str:
         # prompt (with context)
@@ -81,7 +80,7 @@ def sawserq_gpt_service():
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
             str(LLM_PATH),
             config=config
-        )
+        ).to("cuda" if _SawserqGptService.use_gpu else "cpu")
         print("Finished Loading model.")
 
         print("Loading Context Model...")
