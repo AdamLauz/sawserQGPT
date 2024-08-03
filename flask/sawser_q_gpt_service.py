@@ -77,8 +77,7 @@ def sawserq_gpt_service():
 
         # Load config from local path
         config = AutoConfig.from_pretrained(str(LLM_PATH))
-        # config.quantization_config["use_exllama"] = True
-        config.quantization_config["disable_exllama"] = False
+        config.quantization_config["use_exllama"] = True
         config.quantization_config["exllama_config"] = {"version": 2}
 
         _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
