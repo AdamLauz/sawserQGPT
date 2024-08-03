@@ -14,12 +14,21 @@ RUN ls -l /app
 RUN apt-get clean
 RUN apt-get update && apt-get install
 
-# Install python packages
+# Upgrade pip
 RUN pip install --upgrade pip
+
+# Install python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
+# autoGPT build from source
+RUN pip install wheel ninja
+RUN git clone https://github.com/PanQiWei/AutoGPTQ
+RUN cd AutoGPTQ
+RUN pip install .
+
+
 # Install torch with cuda
-run pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
 # Start uWSGI using config file
 CMD ["uwsgi", "app.ini"]
