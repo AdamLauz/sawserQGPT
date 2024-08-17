@@ -1,5 +1,5 @@
 # Pull image with CUDA support
-FROM nvidia/cuda:12.6.0-runtime-ubuntu24.04
+FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
 
 # Set the working directory to /app
 WORKDIR /app
