@@ -10,17 +10,20 @@ ADD . /app
 # List contents of /app to verify directories
 RUN ls -l /app
 
-# Install audio libraries and essential build tools
+# Install essential build tools and Python 3.8
 RUN apt-get clean && \
     apt-get update && \
-    apt-get install -y git build-essential && \
+    apt-get install -y git build-essential python3.8 python3.8-venv python3.8-dev && \
     apt-get clean
 
-# Install python3.8
-RUN apt-get install -y -q python3.8 python3.8-venv python3.8-dev
+# Create and activate a Python virtual environment
+RUN python3.8 -m venv /venv
+
+# Ensure the virtual environment is used for running commands
+ENV PATH="/venv/bin:$PATH"
 
 # Check if Python is installed and print the version
-RUN python3 --version
+RUN python --version
 
 # Upgrade pip
 RUN pip install --upgrade pip
