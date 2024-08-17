@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 services:
   flask:
@@ -13,7 +13,7 @@ services:
               count: 1
               capabilities: [gpu]
     expose:
-      - 900
+      - 5000:900
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
