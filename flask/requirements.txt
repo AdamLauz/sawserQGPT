@@ -45,5 +45,6 @@ Werkzeug==3.0.1
 peft==0.11.1
 llama-index==0.10.55
 llama-index-embeddings-huggingface==0.2.2
+auto-gptq==0.7.0
 optimum==1.21.2
 ctransformers==0.2.24
