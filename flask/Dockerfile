@@ -25,13 +25,6 @@ RUN python3.10 -m venv /venv
 # Ensure the virtual environment is used for running commands
 ENV PATH="/venv/bin:$PATH"
 
-# Create a non-privileged user and change ownership of /app
-RUN useradd -ms /bin/bash appuser && \
-    chown -R appuser /app
-
-# Switch to the non-privileged user
-USER appuser
-
 # Check if Python is installed and print the version
 RUN python --version
 
