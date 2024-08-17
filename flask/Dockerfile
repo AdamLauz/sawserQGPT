@@ -19,9 +19,6 @@ RUN apt-get clean && \
     apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
     apt-get clean
 
-# Install CUDA Toolkit (if not included in base image)
-RUN apt-get update && \
-    apt-get install -y cuda-toolkit-12-4
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
