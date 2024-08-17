@@ -15,6 +15,10 @@ services:
               capabilities: [ gpu ]
     expose:
       - 900
+    runtime: nvidia   # Add this line to specify the NVIDIA runtime
+      environment:
+        - NVIDIA_VISIBLE_DEVICES=all   # Optionally, specify which GPUs to use
+        - NVIDIA_DRIVER_CAPABILITIES=all  # Make sure all required capabilities are available
 
   nginx:
     build: ./nginx

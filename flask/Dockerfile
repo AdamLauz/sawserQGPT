@@ -1,10 +1,10 @@
-# Pull Python3.10
-FROM python:3.10
+# Pull Python 3.10 image with CUDA support
+FROM nvidia/cuda:12.4-runtime-ubuntu20.04
 
 # Set the working directory to /app
 WORKDIR /app
 
-# Transfer content from current dir to /app in container
+# Transfer content from the current directory to /app in the container
 ADD . /app
 
 # List contents of /app to verify directories
@@ -19,11 +19,11 @@ RUN apt-get clean && \
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Install python packages from requirements.txt
+# Install Python packages from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install torch with CUDA
+# Install PyTorch with CUDA
 RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
-# Start uWSGI using config file
-CMD ["uwsgi", "app.ini"]
+# Add the nvidia-smi command to check GPU status
+CMD nvidia-smi && uwsgi app.ini
