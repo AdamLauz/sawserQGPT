@@ -2,6 +2,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 import torch
+import torch.multiprocessing as mp
 
 # Define the root directory
 ROOT_DIR = Path(__file__).parent
@@ -11,6 +12,7 @@ LLM_TOKENIZER_PATH = ROOT_DIR / "LLM_TOKENIZER"
 
 # Determine whether to load the CPU or GPU model
 USE_GPU = torch.cuda.is_available()
+mp.set_start_method("spawn")
 
 
 class _SawserqGptService:
