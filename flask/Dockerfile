@@ -17,7 +17,9 @@ RUN apt-get clean && \
     apt-get clean
 
 # Install python3.10
-RUN apt-get install -y -q python3.10 python3.10-venv python3.10-dev
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.10 python3.10-venv python3.10-dev
 
 # Check if Python is installed and print the version
 RUN python3 --version
