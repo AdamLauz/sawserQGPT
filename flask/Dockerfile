@@ -35,9 +35,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir && \
-    nvcc --version && \
-    nvidia-smi
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
 # install wheel and ninja
 RUN pip install wheel ninja
@@ -48,4 +46,4 @@ RUN git clone https://github.com/PanQiWei/AutoGPTQ && \
     pip install . --no-build-isolation
 
 # Add the nvidia-smi command to check GPU status
-CMD uwsgi app.ini
+CMD nvidia-smi && uwsgi app.ini
