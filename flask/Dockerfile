@@ -10,14 +10,14 @@ ADD . /app
 # List contents of /app to verify directories
 RUN ls -l /app
 
-# Install essential build tools and Python 3.8
+# Install essential build tools and Python 3.10
 RUN apt-get clean && \
     apt-get update && \
-    apt-get install -y git build-essential python3.8 python3.8-venv python3.8-dev && \
+    apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
     apt-get clean
 
 # Create and activate a Python virtual environment
-RUN python3.8 -m venv /venv
+RUN python3.10 -m venv /venv
 
 # Ensure the virtual environment is used for running commands
 ENV PATH="/venv/bin:$PATH"
