@@ -1,6 +1,5 @@
-# Pull Python 3.10 image with CUDA support
+# Pull image with CUDA support
 FROM nvidia/cuda:12.6.0-runtime-ubuntu20.04
-RUN sudo apt-get install python3.10 python3.10-venv python3.10-dev
 
 # Set the working directory to /app
 WORKDIR /app
@@ -16,6 +15,9 @@ RUN apt-get clean && \
     apt-get update && \
     apt-get install -y git build-essential && \
     apt-get clean
+
+# Install python3.10
+RUN apt-get install python3.10 python3.10-venv python3.10-dev
 
 # Upgrade pip
 RUN pip install --upgrade pip
