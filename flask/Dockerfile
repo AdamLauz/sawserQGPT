@@ -9,7 +9,7 @@ RUN apt-get update && \
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7fa2af80
 
 # Add the CUDA repository
-RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/"
+RUN add-apt-repository -y "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/"
 
 # Install CUDA toolkit
 RUN apt-get update && \
