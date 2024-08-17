@@ -1,5 +1,6 @@
 # Pull Python 3.10 image with CUDA support
-FROM nvidia/cuda:12.4-runtime-ubuntu20.04
+FROM nvidia/cuda:12.6.0-runtime-ubuntu20.04
+RUN sudo apt-get install python3.10 python3.10-venv python3.10-dev
 
 # Set the working directory to /app
 WORKDIR /app
@@ -24,6 +25,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
 RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
+
+# Check if Python is installed and print the version
+RUN python3 --version
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
