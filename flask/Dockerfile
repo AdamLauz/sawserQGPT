@@ -1,6 +1,23 @@
 # Pull image with CUDA support
 FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
 
+# Install prerequisites
+RUN apt-get update && \
+    apt-get install -y gnupg
+
+# Add NVIDIA's public GPG key
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7fa2af80
+
+# Add the CUDA repository
+RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/"
+
+# Install CUDA toolkit
+RUN apt-get update && \
+    apt-get install -y cuda
+
+# Verify CUDA installation
+RUN nvcc --version
+
 # Set the working directory to /app
 WORKDIR /app
 
