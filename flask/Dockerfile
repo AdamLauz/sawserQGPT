@@ -25,6 +25,13 @@ RUN python3.10 -m venv /venv
 # Ensure the virtual environment is used for running commands
 ENV PATH="/venv/bin:$PATH"
 
+# Create a non-privileged user and change ownership of /app
+RUN useradd -ms /bin/bash appuser && \
+    chown -R appuser /app
+
+# Switch to the non-privileged user
+USER appuser
+
 # Check if Python is installed and print the version
 RUN python --version
 
@@ -35,7 +42,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu126 --no-cache-dir
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
