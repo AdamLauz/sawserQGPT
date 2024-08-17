@@ -13,6 +13,9 @@ RUN ls -l /app
 # Install essential build tools and Python 3.10
 RUN apt-get clean && \
     apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
     apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
     apt-get clean
 
