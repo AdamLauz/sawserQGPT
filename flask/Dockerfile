@@ -19,6 +19,9 @@ RUN apt-get clean && \
     apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
     apt-get clean
 
+# Install CUDA Toolkit (if not included in base image)
+RUN apt-get update && \
+    apt-get install -y nvidia-cuda-toolkit
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
@@ -36,10 +39,11 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu115 --no-cache-dir
 
 # install wheel and ninja
 RUN pip install wheel ninja
+
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
