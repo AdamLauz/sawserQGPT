@@ -23,9 +23,6 @@ RUN apt-get clean && \
 RUN apt-get update && \
     apt-get install -y nvidia-cuda-toolkit
 
-# Verify CUDA installation
-RUN nvcc --version
-
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
 
@@ -46,11 +43,6 @@ RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org
 
 # install wheel and ninja
 RUN pip install wheel ninja
-
-# Clone the AutoGPTQ repository and install it from source
-RUN git clone https://github.com/PanQiWei/AutoGPTQ && \
-    cd AutoGPTQ && \
-    pip install . --no-build-isolation
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
