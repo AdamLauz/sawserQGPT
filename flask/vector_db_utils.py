@@ -7,8 +7,8 @@ from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core import StorageContext, load_index_from_storage
 import json
 
-PERSIST_DIR = "../flask/storage"
-SETTINGS_FILE = "../flask/storage/settings.json"
+PERSIST_DIR = "./storage"
+SETTINGS_FILE = "./storage/settings.json"
 
 
 def load_settings():
