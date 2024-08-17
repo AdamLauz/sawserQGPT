@@ -1,5 +1,5 @@
 # Pull image with CUDA support
-FROM nvidia/cuda:12.6.0-runtime-ubuntu20.04
+FROM nvidia/cuda:12.4.0-runtime-ubuntu20.04
 
 # Set the working directory to /app
 WORKDIR /app
@@ -35,7 +35,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu126 --no-cache-dir
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
