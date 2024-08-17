@@ -44,6 +44,7 @@ RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org
 # install wheel and ninja
 RUN pip install wheel ninja
 
+RUN pip install auto-gptq
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
