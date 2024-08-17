@@ -1,5 +1,5 @@
 # Pull image with CUDA support
-FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
+FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
 
 # Set the working directory to /app
 WORKDIR /app
@@ -39,7 +39,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu115 --no-cache-dir
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir
 
 # install wheel and ninja
 RUN pip install wheel ninja
