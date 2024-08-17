@@ -1,22 +1,5 @@
 # Pull image with CUDA support
-FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
-
-# Install prerequisites
-RUN apt-get update && \
-    apt-get install -y gnupg
-
-# Add NVIDIA's public GPG key
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7fa2af80
-
-# Add the CUDA repository
-RUN add-apt-repository -y "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/"
-
-# Install CUDA toolkit
-RUN apt-get update && \
-    apt-get install -y cuda
-
-# Verify CUDA installation
-RUN nvcc --version
+FROM nvidia/cuda:12.4.0-runtime-ubuntu24.04
 
 # Set the working directory to /app
 WORKDIR /app
@@ -35,6 +18,10 @@ RUN apt-get clean && \
     apt-get update && \
     apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
     apt-get clean
+
+# Install CUDA Toolkit (if not included in base image)
+RUN apt-get update && \
+    apt-get install -y nvidia-cuda-toolkit
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
