@@ -21,7 +21,7 @@ RUN apt-get clean && \
 
 # Install CUDA Toolkit (if not included in base image)
 RUN apt-get update && \
-    apt-get install -y nvidia-cuda-toolkit
+    apt-get install -y cuda-toolkit-12-4
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
