@@ -17,7 +17,11 @@ RUN apt-get clean && \
     apt-get clean
 
 # Install python3.10
+RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install python3.10 python3.10-venv python3.10-dev
+
+# Check if Python is installed and print the version
+RUN python3 --version
 
 # Upgrade pip
 RUN pip install --upgrade pip
@@ -27,9 +31,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
 RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu124 --no-cache-dir
-
-# Check if Python is installed and print the version
-RUN python3 --version
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
