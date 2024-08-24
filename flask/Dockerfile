@@ -41,9 +41,6 @@ RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org
 # install wheel and ninja
 RUN pip install wheel ninja
 
-# Clone the repository and install the package
-RUN pip install "git+https://github.com/PanQiWei/AutoGPTQ.git"
-
 RUN python3 -m pip cache purge
 
 # Add the nvidia-smi command to check GPU status
