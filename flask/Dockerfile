@@ -1,5 +1,6 @@
 # Pull image with CUDA support
-FROM nvidia/cuda:12.1.0-devel-ubuntu22.04
+ARG CUDA_VERSION=12.1.0
+FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04
 
 # Set the working directory to /app
 WORKDIR /app
@@ -39,6 +40,8 @@ RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org
 
 # install wheel and ninja
 RUN pip install wheel ninja
+
+RUN python3 -m pip cache purge
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
