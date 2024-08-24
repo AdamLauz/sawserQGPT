@@ -1,3 +1,8 @@
+import torch.multiprocessing as mp
+
+# Set start method for multiprocessing
+mp.set_start_method('spawn', force=True)
+
 from flask import Flask, request, jsonify
 from sawser_q_gpt_service import sawserq_gpt_service
 
