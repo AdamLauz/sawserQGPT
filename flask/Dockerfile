@@ -35,14 +35,14 @@ RUN pip install --upgrade pip
 # Install Python packages from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install PyTorch with CUDA
+RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir
+
 # install wheel and ninja
 RUN pip install wheel ninja
 
 # Clone the repository and install the package
 RUN pip install "git+https://github.com/PanQiWei/AutoGPTQ.git"
-
-# Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir
 
 RUN python3 -m pip cache purge
 
