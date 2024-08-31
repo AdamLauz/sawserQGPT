@@ -2,7 +2,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 import torch
+import os
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Define the root directory
 ROOT_DIR = Path(__file__).parent
@@ -61,7 +63,9 @@ class _SawserqGptService:
         print(f"model config = {str(self.model.config)}")
 
         input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.to(device)
-        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280)
+        print("done with tokenizer")
+
+        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280, device=device)
 
         return self.tokenizer.batch_decode(outputs)[0]
 
