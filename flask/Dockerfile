@@ -1,5 +1,5 @@
 # Pull image with CUDA support
-ARG CUDA_VERSION="12.1.1"
+ARG CUDA_VERSION="12.1.0"
 ARG CUDNN_VERSION="8"
 ARG UBUNTU_VERSION="22.04"
 ARG DOCKER_FROM=nvidia/cuda:$CUDA_VERSION-cudnn$CUDNN_VERSION-devel-ubuntu$UBUNTU_VERSION
@@ -41,7 +41,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-ARG PYTORCH="2.1.1"
+ARG PYTORCH="2.2.1"
 ARG CUDA="121"
 RUN pip3 install --no-cache-dir -U torch==$PYTORCH torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu$CUDA
 
@@ -49,6 +49,9 @@ RUN pip3 install --no-cache-dir -U torch==$PYTORCH torchvision torchaudio --extr
 RUN pip install wheel ninja
 
 RUN python3 -m pip cache purge
+
+# Install AutoGPTQ
+RUN pip install auto-gptq
 
 # Add the nvidia-smi command to check GPU status
 CMD nvidia-smi && uwsgi app.ini
