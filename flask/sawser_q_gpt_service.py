@@ -31,7 +31,7 @@ class _SawserqGptService:
     def query(self, query_str: str) -> str:
         # prompt (with context)
         prompt_template_w_context = lambda context, user_input: f"""[INST]SawserQGPT, functioning as a virtual Circassian history and culture expert, communicates in clear, accessible language, uses facts and reliable numbers upon request. \
-        It reacts to feedback aptly and ends responses with its signature '–SawserQGPT'. \
+        It reacts to feedback aptly. \
         SawserQGPT will tailor its responses to match the user's input, providing concise acknowledgments to brief expressions of gratitude or feedback, \
         thus keeping the interaction natural and engaging.
 
@@ -65,9 +65,19 @@ class _SawserqGptService:
         input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         print("done with tokenizer")
 
-        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280)
+        # Use the `generate` method with `return_dict_in_generate` and `output_scores`
+        output = self.model.generate(
+            input_ids,
+            max_new_tokens=280,
+            return_dict_in_generate=True,
+            output_scores=True,
+            # Set other generation parameters as needed
+        )
 
-        return self.tokenizer.batch_decode(outputs)[0]
+        # Stream the output
+        for token_id in output.sequences[0]:
+            token = self.tokenizer.decode(token_id, skip_special_tokens=True)
+            yield token
 
     @property
     def instance(self):
@@ -101,15 +111,18 @@ def sawserq_gpt_service():
                                                                         device_map="cuda",
                                                                         trust_remote_code=False,
                                                                         revision="main")
-        # Load tokenizer
-        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-        #
-        # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
+
         # _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(
         #     str(LLM_PATH),
         #     device_map="cuda:0",
         #     config=config
         # ).to("cuda" if USE_GPU else "cpu")
+
+        # Load tokenizer
+        _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        #
+        # _SawserqGptService.tokenizer = AutoTokenizer.from_pretrained(str(LLM_TOKENIZER_PATH))
+
         print("Finished Loading model.")
 
         print("Loading Context Model...")

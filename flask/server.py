@@ -1,7 +1,7 @@
 import torch.multiprocessing as mp
 from flask import Flask, request, jsonify, Response
 from sawser_q_gpt_service import sawserq_gpt_service
-
+import time
 
 app = Flask(__name__)
 
@@ -21,17 +21,22 @@ def predict():
         # get the user query
         user_query = request.get_json().get("query")
 
-        # make a query
-        #answer = sawserq_gpt.query(user_query)
+        # generate streaming
+        def generate_stream():
+            try:
+                # Generate the streaming response
+                for token in sawserq_gpt.query(user_query):
+                    yield token
+            except Exception as e:
+                # Handle exceptions in the generator
+                yield f"Error: {str(e)}"
 
-        # send back the answer in json format
-        #data = {"answer": answer}
-        #return jsonify(data)
-        return Response(sawserq_gpt.query(user_query), content_type='text/plain')
+        # Return streaming response
+        return Response(generate_stream(), content_type='text/plain')
 
-    except Exception as e:
+    except Exception as err:
         # Return an error response in case of failure
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(err)}), 500
 
 
 if __name__ == "__main__":
