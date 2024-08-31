@@ -1,6 +1,11 @@
 # Pull image with CUDA support
-ARG CUDA_VERSION=12.1.0
-FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04
+ARG CUDA_VERSION="12.1.1"
+ARG CUDNN_VERSION="8"
+ARG UBUNTU_VERSION="22.04"
+ARG DOCKER_FROM=nvidia/cuda:$CUDA_VERSION-cudnn$CUDNN_VERSION-devel-ubuntu$UBUNTU_VERSION
+
+# Base NVidia CUDA Ubuntu image
+FROM $DOCKER_FROM AS base
 
 # Set the working directory to /app
 WORKDIR /app
@@ -11,14 +16,13 @@ ADD . /app
 # List contents of /app to verify directories
 RUN ls -l /app
 
-# Install essential build tools and Python 3.10
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
-    apt-get clean
+# Install Python plus openssh, which is our minimum set of required packages.
+RUN apt-get update -y && \
+    apt-get install -y python3.10 python3.10-pip python3.10-venv python3.10-dev && \
+    apt-get install -y --no-install-recommends openssh-server openssh-client git git-lfs && \
+    python3 -m pip install --upgrade pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
@@ -36,7 +40,9 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA
-RUN pip install torch torchvision torchaudio --trusted-host download.pytorch.org --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir
+ARG PYTORCH="2.1.1"
+ARG CUDA="121"
+RUN pip3 install --no-cache-dir -U torch==$PYTORCH torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu$CUDA
 
 # install wheel and ninja
 RUN pip install wheel ninja
