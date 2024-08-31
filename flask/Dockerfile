@@ -54,4 +54,4 @@ RUN python3 -m pip cache purge
 RUN pip install auto-gptq
 
 # Add the nvidia-smi command to check GPU status
-CMD nvidia-smi && uwsgi app.ini
+CMD nvidia-smi && uwsgi app.ini --lazy
