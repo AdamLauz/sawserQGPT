@@ -1,10 +1,15 @@
 import torch.multiprocessing as mp
 
-
 from flask import Flask, request, jsonify
 from sawser_q_gpt_service import sawserq_gpt_service
 
 app = Flask(__name__)
+
+# Set start method for multiprocessing
+mp.set_start_method('spawn', force=True)
+
+# Initialize sawserq_gpt_service when the server starts
+sawserq_gpt = sawserq_gpt_service()
 
 
 @app.route("/query", methods=["POST"])
@@ -26,10 +31,4 @@ def predict():
 
 
 if __name__ == "__main__":
-    # Set start method for multiprocessing
-    mp.set_start_method('spawn', force=True)
-
-    # Initialize sawserq_gpt_service when the server starts
-    sawserq_gpt = sawserq_gpt_service()
-
     app.run(debug=False)
