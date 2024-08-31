@@ -2,6 +2,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 import torch
+import torch.multiprocessing as mp
+
+# Set start method for multiprocessing
+mp.set_start_method('spawn', force=True)
 
 # Define the root directory
 ROOT_DIR = Path(__file__).parent
@@ -87,7 +91,7 @@ def sawserq_gpt_service():
         #     config.quantization_config["use_exllama"] = False
 
         _SawserqGptService.model = AutoModelForCausalLM.from_pretrained(model_name,
-                                                                        device_map="auto",
+                                                                        device_map="cuda",
                                                                         trust_remote_code=False,
                                                                         revision="main")
         # Load tokenizer
