@@ -65,7 +65,7 @@ class _SawserqGptService:
         input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         print("done with tokenizer")
 
-        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280, device=device)
+        outputs = self.model.generate(inputs=input_ids, max_new_tokens=280)
 
         return self.tokenizer.batch_decode(outputs)[0]
 
