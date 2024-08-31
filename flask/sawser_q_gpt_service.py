@@ -1,8 +1,10 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, TextIteratorStreamer
 from pathlib import Path
 from vector_db_utils import load_settings, get_context, get_query_engine
 import torch
 import os
+from threading import Thread
+
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -65,19 +67,35 @@ class _SawserqGptService:
         input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         print("done with tokenizer")
 
-        # Use the `generate` method with `return_dict_in_generate` and `output_scores`
-        output = self.model.generate(
-            input_ids,
-            max_new_tokens=280,
-            return_dict_in_generate=True,
-            output_scores=True,
-            # Set other generation parameters as needed
-        )
+        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
+
+        generation_kwargs = {
+            "inputs": input_ids,
+            "streamer": streamer,
+            "max_new_tokens": 512,
+            # "stopping_criteria": ,
+            "temperature": 0.7,
+        }
 
         # Stream the output
-        for token_id in output.sequences[0]:
-            token = self.tokenizer.decode(token_id, skip_special_tokens=True)
+        thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
+        thread.start()
+        for _, token in enumerate(streamer):
             yield token
+
+        # # Use the `generate` method with `return_dict_in_generate` and `output_scores`
+        # output = self.model.generate(
+        #     input_ids,
+        #     max_new_tokens=280,
+        #     return_dict_in_generate=True,
+        #     output_scores=True,
+        #     # Set other generation parameters as needed
+        # )
+
+        # Stream the output
+        # for token_id in output.sequences[0]:
+        #     token = self.tokenizer.decode(token_id, skip_special_tokens=True)
+        #     yield token
 
     @property
     def instance(self):
