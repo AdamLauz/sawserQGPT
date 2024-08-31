@@ -16,13 +16,14 @@ ADD . /app
 # List contents of /app to verify directories
 RUN ls -l /app
 
-# Install Python plus openssh, which is our minimum set of required packages.
-RUN apt-get update -y && \
-    apt-get install -y python3.10 python3.10-pip python3.10-venv python3.10-dev && \
-    apt-get install -y --no-install-recommends openssh-server openssh-client git git-lfs && \
-    python3 -m pip install --upgrade pip && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install essential build tools and Python 3.10
+RUN apt-get clean && \
+    apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y git build-essential python3.10 python3.10-venv python3.10-dev && \
+    apt-get clean
 
 # Create and activate a Python virtual environment
 RUN python3.10 -m venv /venv
