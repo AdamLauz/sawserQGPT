@@ -32,7 +32,7 @@ def load_index():
 
 def get_query_engine(settings):
     # set Settings
-    Settings.embed_model = HuggingFaceEmbedding(model_name=settings["embed_model"], device='cpu')
+    Settings.embed_model = HuggingFaceEmbedding(model_name=settings["embed_model"], device='cuda')
     Settings.llm = settings["llm"]
     Settings.chunk_size = settings["chunk_size"]
     Settings.chunk_overlap = settings["chunk_overlap"]
