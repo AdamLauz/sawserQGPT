@@ -1,15 +1,6 @@
 import requests
 
-URL = "http://13.48.10.35/query"
-TEST_QUERY = "What is the most notable fact about the Circassians?" #"Who are the Circassians? where did they come from?"
-
-# if __name__ == "__main__":
-#     # Send the query string in the POST request
-#     response = requests.post(URL, json={'query': TEST_QUERY})
-#     data = response.json()
-#
-#     print(f"Answer from Sawser Q GPT is: {data['answer']}")
-#
+URL = "http://<IP>/query"
 
 
 import streamlit as st
@@ -17,12 +8,8 @@ import streamlit as st
 # Show title and description.
 st.title("💬 SawserQ GPT Chatbot")
 st.write(
-    "This is a simple chatbot that uses a model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
+    "This is a chatbot that uses a SawserQ GPT model to generate responses. "
 )
-
-
 
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.
@@ -44,30 +31,14 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     # Generate a response using the API with streaming enabled
-    response = requests.post(URL, json={'query': prompt}, stream=True)
+    answer = requests.post(URL, json={'query': prompt}).content.decode()
 
-
-    # Function to yield chunks of text
-    def generate_chunks(response):
-        for chunk in response.iter_content(chunk_size=128):
-            if chunk:
-                yield chunk.decode('utf-8')
-
-
-    # Initialize Streamlit for displaying the response
+    # Stream the response to the chat using `st.write_stream`, then store it in
+    # session state.
     with st.chat_message("assistant"):
-        full_response = ""
-        for chunk in generate_chunks(response):
-            full_response += chunk
+        st.write(answer.split("</s>")[0])
+    st.session_state.messages.append({"role": "assistant", "content": answer})
 
-    # Display the entire response
-    #st.write("Full Response:", full_response)
 
-    # Extract and display text after the delimiter [/INST]
-    delimiter = "[/INST]"
-    if delimiter in full_response:
-        response_part = full_response.split(delimiter, 1)[1].strip()  # Extract text after the delimiter
-        st.write(response_part)
-    else:
-        st.write("Delimiter not found in response.")
+
 
