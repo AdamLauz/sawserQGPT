@@ -6,7 +6,6 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core import StorageContext, load_index_from_storage
 import json
-import torch.multiprocessing as mp
 
 
 PERSIST_DIR = "./storage"
@@ -57,9 +56,6 @@ def get_query_engine(settings):
 
 
 def get_context(query: str, query_engine, top_k):
-    # Set start method for multiprocessing
-    mp.set_start_method('spawn', force=True)
-
     # Query the documents using the query engine
     response = query_engine.query(query)
 

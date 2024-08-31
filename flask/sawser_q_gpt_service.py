@@ -42,7 +42,13 @@ class _SawserqGptService:
         print("running prompt:")
         print(f"query: {query_str}")
         print(f"settings: {str(self.settings)}")
-        context = get_context(query_str, self.query_engine, self.settings["top_k"])
+
+        try:
+            context = get_context(query_str, self.query_engine, self.settings["top_k"])
+        except Exception as e:
+            print(f"Failed to get context. Will use empty context. Error: {e}")
+            context = ""
+
         prompt = prompt_template_w_context(context, query_str)
 
         if USE_GPU:
