@@ -24,7 +24,13 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager.
-    This is a context manager that allows us to start and stop the application.
+    A FastAPI-specific pattern for managing application lifecycle.
+    @asynccontextmanager is It's a Python decorator that turns a function into an async context manager. Think of it like a with statement but for async code.
+    The "yield" statement is KEY here, splitting the function into two parts:
+    - The part before the yield is executed when the context manager is entered (e.g., when the application starts).
+    - The part after the yield is executed when the context manager is exited (e.g., when the application shuts down).
+    This pattern is used to manage the lifecycle of the application, ensuring that the services are properly initialized and shut down.
+    FastAPI automatically calls this function, note that the function is sent as an argument to the FastAPI application.
     """
     # Startup
     logger.info("Starting SawserQ GPT application")
