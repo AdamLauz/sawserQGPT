@@ -11,12 +11,13 @@ transformers==4.44.2
 # Or for CPU only: pip install torch torchvision torchaudio
 torch>=2.0.0
 sentence-transformers==3.0.1
-accelerate==0.33.1
+accelerate>=0.33.0
 
-# RAG and vector database
+# RAG and vector database - Updated to compatible versions
 llama-index==0.10.55
 llama-index-embeddings-huggingface==0.2.2
-llama-index-llms-huggingface==0.1.4
+# Remove the conflicting package and use a compatible alternative
+# llama-index-llms-huggingface==0.1.4  # This causes the conflict
 
 # HTTP client for async requests
 httpx==0.27.0
