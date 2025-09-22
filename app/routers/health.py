@@ -19,7 +19,16 @@ async def health_check(
     llm_service: LLMService = Depends(get_llm_service),
     vector_service: VectorService = Depends(get_vector_service)
 ) -> HealthResponse:
-    """Health check endpoint."""
+    """Health check endpoint.
+    Depends is a decorator that allows us to inject dependencies into the function.
+    By injecting dependencies we mean using them in the function.
+    Why not just initialize the classes in the function?
+    Because we want to use the same instance of the classes throughout the application.
+    If we initialize the classes in the function, we will create a new instance of the classes for each request.
+    This is not efficient and it is not what we want.
+    So this pattern gives us a singleton instance of the classes throughout the application.
+    Note that the get_llm_service and get_vector_service are annotated with @lru_cache() which means that the result of the function will be cached and reused for the same input.
+    """
     try:
         # Check LLM service
         llm_loaded = llm_service.is_loaded
@@ -33,7 +42,7 @@ async def health_check(
         return HealthResponse(
             status="healthy" if overall_healthy else "unhealthy",
             version=settings.app_version,
-            model_loaded=llm_loaded,
+            llm_loaded=llm_loaded,
             vector_db_ready=vector_ready
         )
         

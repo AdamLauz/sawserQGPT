@@ -154,7 +154,7 @@ def display_health_status(health_data: dict):
             return
         
         status = health_data.get("status", "unknown")
-        model_loaded = health_data.get("model_loaded", False)
+        llm_loaded = health_data.get("llm_loaded", False)
         vector_ready = health_data.get("vector_db_ready", False)
         
         # Overall status
@@ -164,7 +164,7 @@ def display_health_status(health_data: dict):
             st.error("❌ System Unhealthy")
         
         # Model status
-        if model_loaded:
+        if llm_loaded:
             st.success("✅ LLM Model Loaded")
         else:
             st.warning("⚠️ LLM Model Not Loaded")

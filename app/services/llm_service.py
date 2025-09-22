@@ -87,7 +87,7 @@ class LLMService:
         max_tokens is the maximum number of tokens to generate.
         temperature is the temperature of the model.
         """
-        if not self.is_loaded(): 
+        if not self.is_loaded: 
             await self.load_model() # await is used to wait for the model to be loaded. There is a possibility that the model is not loaded yet.
         
         max_tokens = max_tokens or settings.max_tokens
@@ -129,7 +129,7 @@ class LLMService:
     async def generate_stream(self, prompt: str, max_tokens: Optional[int] = None, temperature: Optional[float] = None) -> AsyncGenerator[str, None]:
         """Generate a streaming response for the given prompt.
          This method returns AsyncGenerator[str, None] which is a generator that yields strings asynchronously."""
-        if not self.is_loaded():
+        if not self.is_loaded:
             await self.load_model() # await is used to wait for the model to be loaded. There is a possibility that the model is not loaded yet.
         
         max_tokens = max_tokens or settings.max_tokens
@@ -151,14 +151,14 @@ class LLMService:
                 skip_special_tokens=True
             )
             
-            # Generation parameters
+            # Generation parameters - unpack inputs properly
             generation_kwargs = {
-                "inputs": inputs, # TODO: should we use **inputs instead of inputs? because the model.generate function expects a dictionary of input tokens (keys are input_ids, attention_mask, etc.). and it is not a dictionary but a tensor.
+                **inputs,  # Unpack input_ids, attention_mask, etc.
                 "streamer": streamer,
                 "max_new_tokens": max_tokens,
                 "temperature": temperature,
                 "do_sample": True,
-                "pad_token_id": self.tokenizer.eos_token_id, #TODO: why not use pad_token_id?
+                "pad_token_id": self.tokenizer.eos_token_id,
                 "eos_token_id": self.tokenizer.eos_token_id,
                 "repetition_penalty": 1.1
             }

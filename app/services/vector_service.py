@@ -3,8 +3,12 @@
 import asyncio
 import json
 import logging
+import os
 from pathlib import Path
 from typing import List, Optional, Tuple
+
+# Disable OpenAI by setting environment variable
+os.environ["OPENAI_API_KEY"] = ""
 
 from llama_index.core import Settings, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core.retrievers import VectorIndexRetriever
@@ -32,13 +36,16 @@ class VectorService:
         try:
             logger.info("Initializing vector database service")
             
-            # Set up LlamaIndex settings
+            # Set up LlamaIndex settings - explicitly use open source models
             Settings.embed_model = HuggingFaceEmbedding(
                 model_name=settings.embedding_model_name,
                 device=settings.device
             )
             Settings.chunk_size = settings.chunk_size # Chunk size for the vector database. This is the number of tokens in each chunk.
             Settings.chunk_overlap = settings.chunk_overlap # Chunk overlap for the vector database. This is the number of tokens to overlap between chunks.
+            
+            # Ensure no OpenAI is used
+            Settings.llm = None  # We handle LLM separately in our service
             
             # Load or build index
             self.index = await self._load_or_build_index()

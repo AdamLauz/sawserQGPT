@@ -29,8 +29,8 @@ A modern, production-ready RAG (Retrieval-Augmented Generation) application buil
 ## 🛠️ Technology Stack
 
 - **Backend**: FastAPI with async/await
-- **LLM**: Microsoft DialoGPT-medium (lightweight alternative)
-- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2
+- **LLM**: Open source models (DialoGPT, BlenderBot, GPT-Neo)
+- **Embeddings**: sentence-transformers models (all-mpnet-base-v2)
 - **Vector DB**: LlamaIndex with HuggingFace embeddings
 - **Frontend**: Streamlit with async HTTP client
 - **Deployment**: Docker + Docker Compose
@@ -80,18 +80,23 @@ A modern, production-ready RAG (Retrieval-Augmented Generation) application buil
    python test_gpu.py
    ```
 
-6. **Add your documents**:
+6. **Test different models (optional)**:
+   ```bash
+   python test_models.py
+   ```
+
+7. **Add your documents**:
    ```bash
    mkdir -p resources
    # Add your PDF/text files to resources/
    ```
 
-7. **Start the server**:
+8. **Start the server**:
    ```bash
    python start_server.py
    ```
 
-8. **Start the client** (in another terminal):
+9. **Start the client** (in another terminal):
    ```bash
    streamlit run client_streamlit.py
    ```
@@ -114,8 +119,8 @@ A modern, production-ready RAG (Retrieval-Augmented Generation) application buil
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LLM_MODEL_NAME` | `microsoft/DialoGPT-medium` | LLM model to use |
-| `EMBEDDING_MODEL_NAME` | `sentence-transformers/all-MiniLM-L6-v2` | Embedding model |
+| `LLM_MODEL_NAME` | `microsoft/DialoGPT-large` | Open source LLM model to use |
+| `EMBEDDING_MODEL_NAME` | `sentence-transformers/all-mpnet-base-v2` | Open source embedding model |
 | `MAX_TOKENS` | `512` | Maximum tokens to generate |
 | `TEMPERATURE` | `0.7` | Sampling temperature |
 | `USE_GPU` | `true` (auto-detect) | Enable GPU acceleration |
@@ -124,17 +129,19 @@ A modern, production-ready RAG (Retrieval-Augmented Generation) application buil
 | `PERSIST_DIR` | `./storage` | Vector DB storage directory |
 | `RESOURCES_DIR` | `./resources` | Documents directory |
 
-### Model Options
+### Open Source Model Options
 
-**Lightweight LLM Models**:
-- `microsoft/DialoGPT-medium` (345M parameters) - Default
-- `microsoft/DialoGPT-small` (117M parameters) - Faster
-- `distilgpt2` (82M parameters) - Smallest
+**Conversational LLM Models**:
+- `microsoft/DialoGPT-large` (774M parameters) - **Default, best quality**
+- `microsoft/DialoGPT-medium` (345M parameters) - Balanced performance
+- `facebook/blenderbot-400M-distill` (400M parameters) - Good alternative
+- `EleutherAI/gpt-neo-125M` (125M parameters) - Very fast, low memory
+- `EleutherAI/gpt-neo-1.3B` (1.3B parameters) - High quality, more memory
 
 **Embedding Models**:
-- `sentence-transformers/all-MiniLM-L6-v2` (22M parameters) - Default
-- `sentence-transformers/all-MiniLM-L12-v2` (33M parameters) - Better quality
-- `sentence-transformers/paraphrase-MiniLM-L6-v2` (22M parameters) - Alternative
+- `sentence-transformers/all-mpnet-base-v2` (420M parameters) - **Default, best quality**
+- `sentence-transformers/all-MiniLM-L6-v2` (22M parameters) - Faster, smaller
+- `sentence-transformers/all-MiniLM-L12-v2` (33M parameters) - Better than L6
 
 ## 🚀 GPU Support
 

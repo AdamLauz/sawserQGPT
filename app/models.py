@@ -32,7 +32,7 @@ class HealthResponse(BaseModel):
     
     status: str = Field(..., description="Service status")
     version: str = Field(..., description="Application version")
-    model_loaded: bool = Field(..., description="Whether the model is loaded")
+    llm_loaded: bool = Field(..., description="Whether the LLM model is loaded")
     vector_db_ready: bool = Field(..., description="Whether vector database is ready")
 
 

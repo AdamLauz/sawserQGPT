@@ -6,7 +6,7 @@ import logging
 import sys
 from pathlib import Path
 
-import uvicorn
+import uvicorn # uvicorn is a ASGI server which is a replacement for WSGI. ASGI is a standard for asynchronous web servers. It is used to run the FastAPI application.
 
 from app.config import settings
 

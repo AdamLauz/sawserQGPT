@@ -67,9 +67,9 @@ class Settings(BaseSettings):
     app_version: str = "2.0.0"
     debug: bool = False
     
-    # Model settings
-    llm_model_name: str = "microsoft/DialoGPT-medium"  # Lightweight alternative
-    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2" # Smaller embeddings
+    # Model settings - Simple open source models
+    llm_model_name: str = "microsoft/DialoGPT-medium"  # Simple, reliable model
+    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2" # Simple embeddings model
     max_tokens: int = 512 # Maximum tokens to generate
     temperature: float = 0.7 # Sampling temperature
     top_k: int = 3 # Top-k sampling, the number of tokens to sample from the model.

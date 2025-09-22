@@ -2,7 +2,11 @@
 
 import logging
 import asyncio
+import os
 from contextlib import asynccontextmanager
+
+# Disable OpenAI by setting environment variable
+os.environ["OPENAI_API_KEY"] = ""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
