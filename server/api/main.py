@@ -12,8 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from server.api.config import api_config
-from server.agent.config import agent_config
-from server.api.dependencies import get_rag_agent
+from server.api.dependencies import get_rag_orchestrator_client
 from server.api.exceptions import SawserQGPTError
 from server.api.routers import health, query
 from server.api.middleware.cors import setup_cors_middleware
@@ -41,13 +40,15 @@ async def lifespan(app: FastAPI):
     logger.info("Starting SawserQ GPT application")
     
     try:
-        # Initialize RAG agent
-        rag_agent = get_rag_agent()
+        # Initialize RAG orchestrator client
+        rag_client = get_rag_orchestrator_client()
         
-        # Initialize the RAG agent (this will load models and setup knowledge graph)
-        logger.info("Initializing RAG agent...")
-        await rag_agent.initialize()
-        logger.info("RAG agent initialized successfully")
+        # Check if services are healthy
+        logger.info("Checking service health...")
+        health_status = await rag_client.get_health_status()
+        if not health_status.get("overall_healthy", False):
+            logger.warning("Some services are not healthy, but continuing...")
+        logger.info("Services checked successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize application: {e}")

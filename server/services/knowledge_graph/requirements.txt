@@ -1,0 +1,19 @@
+# Knowledge Graph Service dependencies
+
+# FastMCP for tool services
+fastmcp>=0.1.0
+
+# Core dependencies
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# Configuration
+pydantic==2.8.2
+pydantic-settings==2.4.0
+
+# Knowledge graph and NLP
+networkx>=3.0
+spacy>=3.7.0
+
+# Additional utilities
+numpy>=1.24.0
