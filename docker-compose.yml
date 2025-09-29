@@ -1,7 +1,8 @@
 services:
-  sawserq-gpt:
-    build: .
-    container_name: sawserq-gpt
+  # Server - FastAPI backend with RAG agent
+  server:
+    build: ./server
+    container_name: sawserq-gpt-server
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -10,11 +11,12 @@ services:
       - USE_GPU=false
       - LLM_MODEL_NAME=microsoft/DialoGPT-medium
       - EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
-      - PERSIST_DIR=/app/storage
-      - RESOURCES_DIR=/app/resources
+      - PERSIST_DIR=/app/agent/storage
+      - RESOURCES_DIR=/app/agent/resources
     volumes:
-      - ./resources:/app/resources:ro
-      - ./storage:/app/storage
+      - ./server/agent/resources:/app/agent/resources:ro
+      - ./server/agent/storage:/app/agent/storage
+    working_dir: /app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 30s
@@ -28,16 +30,28 @@ services:
         reservations:
           memory: 2G
 
-  # Optional: Add a reverse proxy for production
-  nginx:
-    image: nginx:alpine
-    container_name: sawserq-gpt-nginx
+  # Client - Streamlit frontend
+  client:
+    build: ./client
+    container_name: sawserq-gpt-client
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://server:8000
+    depends_on:
+      - server
+    profiles:
+      - client
+
+  # Reverse Proxy - Nginx for production
+  reverse_proxy:
+    build: ./server/reverse_proxy
+    container_name: sawserq-gpt-proxy
     restart: unless-stopped
     ports:
       - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - sawserq-gpt
+      - server
     profiles:
       - production

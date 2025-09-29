@@ -1,0 +1,8 @@
+# Reverse proxy dependencies
+
+# Configuration
+pydantic==2.8.2
+pydantic-settings==2.4.0
+
+# Note: Nginx is typically installed via system package manager or Docker
+# This file is for any Python-based configuration management

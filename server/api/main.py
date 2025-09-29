@@ -9,13 +9,14 @@ from contextlib import asynccontextmanager
 os.environ["OPENAI_API_KEY"] = ""
 
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.config import settings
-from app.dependencies import get_llm_service, get_vector_service
-from app.exceptions import SawserQGPTError
-from app.routers import health, query
+from server.api.config import api_config
+from server.agent.config import agent_config
+from server.api.dependencies import get_rag_agent
+from server.api.exceptions import SawserQGPTError
+from server.api.routers import health, query
+from server.api.middleware.cors import setup_cors_middleware
 
 # Configure logging
 logging.basicConfig(
@@ -40,17 +41,13 @@ async def lifespan(app: FastAPI):
     logger.info("Starting SawserQ GPT application")
     
     try:
-        # Initialize services
-        llm_service = get_llm_service()
-        vector_service = get_vector_service()
+        # Initialize RAG agent
+        rag_agent = get_rag_agent()
         
-        # Load models asynchronously, wait for both of them to complete before moving on (await)
-        logger.info("Loading models...")
-        await asyncio.gather( # gather alone runs multiple tasks in parallel does not wait for them to complete before moving on. (that is why we use await)
-            llm_service.load_model(),
-            vector_service.initialize()
-        )
-        logger.info("Models loaded successfully")
+        # Initialize the RAG agent (this will load models and setup knowledge graph)
+        logger.info("Initializing RAG agent...")
+        await rag_agent.initialize()
+        logger.info("RAG agent initialized successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize application: {e}")
@@ -61,28 +58,22 @@ async def lifespan(app: FastAPI):
     # Shutdown - when the application is shutting down, we need to unload the models to free the memory.
     logger.info("Shutting down SawserQ GPT application")
     try:
-        llm_service = get_llm_service()
-        await llm_service.unload_model()
+        # RAG agent cleanup is handled automatically when the process exits
+        logger.info("RAG agent cleanup completed")
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
 
 
 # Create FastAPI application
 app = FastAPI(
-    title=settings.app_name,
-    version=settings.app_version,
+    title=api_config.app_name,
+    version=api_config.app_version,
     description="Modern RAG application with lightweight models",
     lifespan=lifespan # lifespan is a context manager that allows us to start and stop the application.
 )
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Setup middleware
+setup_cors_middleware(app)
 
 # Include routers
 app.include_router(health.router)
@@ -112,8 +103,8 @@ async def general_exception_handler(request, exc: Exception):
 async def root():
     """Root endpoint."""
     return {
-        "message": f"Welcome to {settings.app_name}",
-        "version": settings.app_version,
+        "message": f"Welcome to {api_config.app_name}",
+        "version": api_config.app_version,
         "docs": "/docs",
         "health": "/api/v1/health"
     }
@@ -123,9 +114,9 @@ if __name__ == "__main__":
     import uvicorn
     
     uvicorn.run(
-        "app.main:app",
-        host=settings.host,
-        port=settings.port,
-        reload=settings.debug,
-        workers=1 if settings.debug else settings.workers
+        "server.api.main:app",
+        host=api_config.host,
+        port=api_config.port,
+        reload=api_config.debug,
+        workers=1 if api_config.debug else api_config.workers
     )

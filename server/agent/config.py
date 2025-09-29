@@ -1,12 +1,12 @@
-"""Configuration management using Pydantic Settings."""
+"""Agent-specific configuration."""
 
 import os
 from pathlib import Path
 from typing import Optional
 
 import torch
-from pydantic import Field, validator # Field is a class that allows us to create a field for the settings object. validator is a function that allows us to validate the settings object.
-from pydantic_settings import BaseSettings # BaseSettings is a class that allows us to create a settings object.
+from pydantic import Field, validator
+from pydantic_settings import BaseSettings
 
 
 def _detect_gpu_availability() -> bool:
@@ -41,8 +41,8 @@ def _get_gpu_info() -> dict:
     
     info = {
         "available": True,
-        "count": torch.cuda.device_count(), # count of GPUs
-        "current_device": torch.cuda.current_device(), # current GPU.
+        "count": torch.cuda.device_count(),
+        "current_device": torch.cuda.current_device(),
         "devices": []
     }
     
@@ -50,43 +50,40 @@ def _get_gpu_info() -> dict:
         device_info = {
             "id": i,
             "name": torch.cuda.get_device_name(i),
-            "memory_total": torch.cuda.get_device_properties(i).total_memory / 1024**3, # total memory of the GPU. Units are in GiB.
-            "memory_allocated": torch.cuda.memory_allocated(i) / 1024**3, # memory allocated to the GPU. Units are GiB.
-            "memory_reserved": torch.cuda.memory_reserved(i) / 1024**3, # memory reserved for the GPU. Units are GiB.
+            "memory_total": torch.cuda.get_device_properties(i).total_memory / 1024**3,
+            "memory_allocated": torch.cuda.memory_allocated(i) / 1024**3,
+            "memory_reserved": torch.cuda.memory_reserved(i) / 1024**3,
         }
         info["devices"].append(device_info)
     
     return info
 
 
-class Settings(BaseSettings):
-    """Application settings with environment variable support."""
+class AgentConfig(BaseSettings):
+    """Agent-specific configuration."""
     
-    # Application settings
-    app_name: str = "SawserQ GPT"
-    app_version: str = "2.0.0"
-    debug: bool = False
+    # Model settings
+    llm_model_name: str = "microsoft/DialoGPT-large"
+    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
     
-    # Model settings - Simple open source models
-    llm_model_name: str = "microsoft/DialoGPT-medium"  # Simple, reliable model
-    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2" # Simple embeddings model
-    max_tokens: int = 512 # Maximum tokens to generate
-    temperature: float = 0.7 # Sampling temperature
-    top_k: int = 3 # Top-k sampling, the number of tokens to sample from the model.
+    # Knowledge Graph settings
+    knowledge_graph_dir: str = "./knowledge_graph"
+    max_entities_per_document: int = 50
+    max_relations_per_document: int = 100
+    entity_similarity_threshold: float = 0.8
+    relation_confidence_threshold: float = 0.7
+    max_tokens: int = 512
+    temperature: float = 0.7
+    top_k: int = 3
     
     # Vector database settings
-    persist_dir: str = "./storage" # Directory to store the vector database.
-    chunk_size: int = 256 # Chunk size for the vector database. This is the number of tokens in each chunk.
-    chunk_overlap: int = 25 # Chunk overlap for the vector database. This is the number of tokens to overlap between chunks.
-    similarity_cutoff: float = 0.5 # Similarity cutoff for the vector database. This is the similarity score below which chunks are considered similar.
+    persist_dir: str = "./agent/storage"
+    chunk_size: int = 256
+    chunk_overlap: int = 25
+    similarity_cutoff: float = 0.5
     
     # Resources directory
-    resources_dir: str = "./resources" # Directory to store the resources. e.g. PDF files.
-    
-    # Server settings
-    host: str = "0.0.0.0" # Host to bind to.    
-    port: int = 8000 # Port to bind to.
-    workers: int = 1 # Number of workers to use.
+    resources_dir: str = "./agent/resources"
     
     # GPU settings
     use_gpu: bool = Field(default_factory=lambda: _detect_gpu_availability())
@@ -127,11 +124,11 @@ class Settings(BaseSettings):
         else:
             print("💻 Using CPU (GPU not available)")
     
-    class Config: # What is this? It is a class that allows us to configure the settings object.
-        env_file = ".env" # The environment file to use.
-        env_file_encoding = "utf-8" # The encoding of the environment file.
-        case_sensitive = False # Whether to case sensitive the environment variables.
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = False
 
 
-# Global settings instance
-settings = Settings()
+# Global agent config instance
+agent_config = AgentConfig()

@@ -11,6 +11,11 @@ class ModelLoadError(SawserQGPTError):
     pass
 
 
+class QueryError(SawserQGPTError):
+    """Raised when query processing fails."""
+    pass
+
+
 class VectorDBError(SawserQGPTError):
     """Raised when vector database operations fail."""
     pass
