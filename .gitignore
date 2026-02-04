@@ -1,0 +1,8 @@
+# Ignore all files in the .env directory
+.env
+
+# Ignore all files in the storage directory
+storage/
+
+# Ignore venv
+venv/

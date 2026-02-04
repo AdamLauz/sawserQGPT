@@ -1,27 +1,140 @@
-version: "3.8"
-
 services:
-  flask:
-    build: ./flask
-    container_name: flask
-    restart: always
+  # API Gateway
+  api-gateway:
+    build: ./server/api
+    container_name: sawserq-gpt-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=false
+      - KNOWLEDGE_GRAPH_HOST=knowledge-graph
+      - KNOWLEDGE_GRAPH_PORT=8001
+      - DOCUMENT_PROCESSOR_HOST=document-processor
+      - DOCUMENT_PROCESSOR_PORT=8002
+      - LLM_HOST=llm-service
+      - LLM_PORT=8004
+      - RAG_ORCHESTRATOR_HOST=rag-orchestrator
+      - RAG_ORCHESTRATOR_PORT=8003
+    depends_on:
+      - knowledge-graph
+      - document-processor
+      - llm-service
+      - rag-orchestrator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Knowledge Graph Service (FastMCP)
+  knowledge-graph:
+    build: ./server/services/knowledge_graph
+    container_name: sawserq-gpt-kg
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - KNOWLEDGE_GRAPH_DIR=/app/knowledge_graph
+    volumes:
+      - ./server/services/knowledge_graph/knowledge_graph:/app/knowledge_graph
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # Document Processor Service (FastMCP)
+  document-processor:
+    build: ./server/services/document_processor
+    container_name: sawserq-gpt-doc
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      - RESOURCES_DIR=/app/resources
+    volumes:
+      - ./server/agent/resources:/app/resources:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # LLM Service (FastMCP)
+  llm-service:
+    build: ./server/services/llm
+    container_name: sawserq-gpt-llm
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      - USE_GPU=false
+      - LLM_MODEL_NAME=microsoft/DialoGPT-large
+      - EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
     deploy:
       resources:
+        limits:
+          memory: 6G
         reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    expose:
-      - 5000:900
-    runtime: nvidia
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    restart: always
+  # RAG Orchestrator Service (FastMCP)
+  rag-orchestrator:
+    build: ./server/services/rag_orchestrator
+    container_name: sawserq-gpt-rag
+    restart: unless-stopped
     ports:
-      - "80:1234"
+      - "8003:8003"
+    environment:
+      - KNOWLEDGE_GRAPH_HOST=knowledge-graph
+      - KNOWLEDGE_GRAPH_PORT=8001
+      - DOCUMENT_PROCESSOR_HOST=document-processor
+      - DOCUMENT_PROCESSOR_PORT=8002
+      - LLM_HOST=llm-service
+      - LLM_PORT=8004
+    depends_on:
+      - knowledge-graph
+      - document-processor
+      - llm-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/get_health_status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Client (Streamlit)
+  client:
+    build: ./client
+    container_name: sawserq-gpt-client
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://api-gateway:8000
+    depends_on:
+      - api-gateway
+    profiles:
+      - client
+
+  # Reverse Proxy (Nginx)
+  reverse-proxy:
+    build: ./server/reverse_proxy
+    container_name: sawserq-gpt-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    profiles:
+      - production

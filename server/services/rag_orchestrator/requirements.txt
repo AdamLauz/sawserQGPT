@@ -1,0 +1,13 @@
+# RAG Orchestrator Service dependencies
+
+# FastMCP for tool services
+fastmcp>=0.1.0
+
+# Core dependencies
+fastapi==0.104.1
+uvicorn==0.24.0
+httpx==0.25.2
+
+# Configuration
+pydantic==2.8.2
+pydantic-settings==2.4.0

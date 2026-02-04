@@ -1,2 +1,7 @@
-requests==2.31.0
-streamlit
+# Main project requirements - includes all sub-project dependencies
+# This is for development and testing the entire system
+
+# Include all sub-project requirements
+-r server/requirements.txt
+-r client/requirements.txt
+-r test/requirements.txt

@@ -1,0 +1,3 @@
+# Streamlit client dependencies
+streamlit==1.39.0
+httpx==0.25.2
